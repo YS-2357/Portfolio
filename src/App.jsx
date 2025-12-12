@@ -184,7 +184,7 @@ function NavBar() {
   return (
     <nav className="top-nav">
       <a className="brand" href="#top">
-        YS Joung · AI Dev
+        정영선 · AI 개발자
       </a>
       <div className="nav-links">
         {navItems.map((item) => (
