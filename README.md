@@ -15,7 +15,7 @@ npm run build
 - 데이터 및 섹션 마크업: `src/App.jsx`
 - 전역 스타일 및 레이아웃: `src/App.css`
 - 전역 기본 스타일: `src/index.css`
-- 히어로 패턴 이미지: `src/assets/placeholder-hero.svg`
+- 히어로는 CSS 추상 배경을 사용 중(이미지 비사용)
 
 ## 연락처
 - 이메일: joungyoungsun20@gmail.com
