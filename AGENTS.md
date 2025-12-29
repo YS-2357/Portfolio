@@ -8,11 +8,16 @@ React + TypeScript 정적 포트폴리오 사이트이며 Firebase Hosting에 �
 - 플로팅 챗봇 UI에서 관련 페이지 링크 제공.
 - 반복 작업은 `skills/` 스킬로 캡슐화.
 
+## 커밋 규칙
+- 일반적인 컨벤션을 사용한다: `type: 한글 요약`.
+- 파일별로 나눠 커밋한다.
+
 ## 참고 문서
 - 앱 구조와 라우팅: `reference/architecture/system-overview.md`
 - 랜딩 페이지 규칙: `reference/architecture/landing-guidelines.md`
 - 콘텐츠 스키마: `reference/domain/content-schema.md`
 - Firebase Hosting: `reference/processes/firebase-hosting.md`
+- 랜딩 템플릿 적용: `reference/processes/landing-implementation.md`
 
 ## 공용 자원
 - UI/콘텐츠 공용 자산은 `asset/`에 둔다.
