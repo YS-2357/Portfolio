@@ -11,6 +11,9 @@
    - `asset/templates/landing-example.css` → `app/src/components/landing/landing-example.css`
 3) `app/src/App.tsx`에서 `LandingExample` 사용
 4) 필요 시 `app/src/index.css`에 전역 폰트만 추가
+5) 라우터 구성
+   - 프로젝트 상세: `/projects/codeit/:project/:page`
+   - 수상 전체: `/awards`
 
 ## 주의 사항
 - 배경은 단색 밤하늘 톤 유지(그라데이션 금지)
@@ -20,3 +23,4 @@
 ## 데이터 연결
 - 정적 콘텐츠는 `app/public/content/`에서 fetch로 읽는다.
 - 경로 예: `/content/resume/summary.md`
+- 프로젝트 문서 경로 예: `/content/projects/codeit/<project>/star.md`
