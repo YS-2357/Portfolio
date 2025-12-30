@@ -1,34 +1,286 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useEffect, useState } from 'react'
 import './App.css'
 
+const fetchText = async (url: string) => {
+  const res = await fetch(url)
+  if (!res.ok) return ''
+  const contentType = res.headers.get('content-type') || ''
+  const text = await res.text()
+  if (contentType.includes('text/html')) return ''
+  if (text.trim().toLowerCase().startsWith('<!doctype html')) return ''
+  return text
+}
+
 function App() {
-  const [count, setCount] = useState(0)
+  const [intro, setIntro] = useState('문제 정의에서 배포까지 실행하는 개발자')
+  const [summaryItems, setSummaryItems] = useState<string[]>([])
+  const [projectSummaries, setProjectSummaries] = useState({
+    pill: 'YOLOv8 최고 성능 mAP@0.5 0.99334 달성',
+    rfp: '문서 요약·질의응답 자동화로 검색시간 90% 절감',
+    geo: '제작 소요 6h→10m, 비용 약 10만 원 절감',
+  })
+  const [awards, setAwards] = useState({
+    bootcamp: '제7회 K-디지털 해커톤 장관상: 우수상, 전체 389팀 중 3등',
+    university: '전국 대학생 수학 경시대회: 동상, 제1분야',
+  })
+  const [contact, setContact] = useState({
+    email: 'joungyoungsun20@gmail.com',
+    github: 'https://github.com/YS-2357',
+    blog: 'https://velog.io/@ys2357/posts',
+    linkedin: 'https://www.linkedin.com/in/youngsun-joung-5b0584345',
+    phone: '010-8766-4095',
+  })
+
+  useEffect(() => {
+    fetchText('/content/resume/one-line-intro.md')
+      .then((text) => {
+        const cleaned = text.replace(/^#\s+/m, '').trim()
+        if (cleaned) setIntro(cleaned)
+      })
+      .catch(() => {})
+
+    fetchText('/content/resume/summary.md')
+      .then((text) => {
+        const items = text
+          .split('\n')
+          .map((line) => line.trim())
+          .filter(Boolean)
+        if (items.length) setSummaryItems(items)
+      })
+      .catch(() => {})
+
+    Promise.all([
+      fetchText('/content/projects/codeit/pill-recognition/summary.md'),
+      fetchText('/content/projects/codeit/rfp-rag/summary.md'),
+      fetchText('/content/projects/codeit/geo-product-page/summary.md'),
+    ])
+      .then(([pill, rfp, geo]) => {
+        setProjectSummaries((prev) => ({
+          pill: pill.trim() || prev.pill,
+          rfp: rfp.trim() || prev.rfp,
+          geo: geo.trim() || prev.geo,
+        }))
+      })
+      .catch(() => {})
+
+    Promise.all([
+      fetchText('/content/awards/bootcamp/summary.md'),
+      fetchText('/content/awards/university/summary.md'),
+    ])
+      .then(([bootcamp, university]) => {
+        const nextBootcamp = bootcamp.trim()
+        const nextUniversity = university.trim()
+        setAwards((prev) => ({
+          bootcamp: nextBootcamp || prev.bootcamp,
+          university: nextUniversity || prev.university,
+        }))
+      })
+      .catch(() => {})
+
+    fetchText('/content/resume/contact.md')
+      .then((text) => {
+        const next = { ...contact }
+        text
+          .split('\n')
+          .map((line) => line.trim())
+          .filter(Boolean)
+          .forEach((line) => {
+            const [rawKey, ...rest] = line.split(':')
+            if (!rawKey || rest.length === 0) return
+            const value = rest.join(':').trim()
+            const key = rawKey.toLowerCase()
+            if (key.includes('email') || key.includes('e-mail')) next.email = value
+            if (key.includes('github')) next.github = value
+            if (key.includes('linkedin')) next.linkedin = value
+            if (key.includes('velog') || key.includes('blog')) next.blog = value
+            if (key.includes('phone')) next.phone = value
+          })
+        setContact(next)
+      })
+      .catch(() => {})
+  }, [])
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <div className="landing">
+      <header className="hero">
+        <div className="hero__copy">
+          <p className="hero__eyebrow">AI · RAG</p>
+          <h1>정영선 포트폴리오</h1>
+          <div className="hero__cta">
+            <button className="btn btn--primary">프로젝트 보기</button>
+            <a className="btn" href="/content/resume/resume.pdf" target="_blank" rel="noreferrer">
+              이력서 보기
+            </a>
+          </div>
+        </div>
+        <div className="hero__card">
+          <div className="hero__avatar" />
+          <div className="hero__meta">
+            <div className="meta__desc">{intro}</div>
+          </div>
+        </div>
+      </header>
+
+      <section className="section">
+        <h2>요약</h2>
+        <ul className="summary-list">
+          {summaryItems.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="section">
+        <h2>핵심 역량</h2>
+        <ul className="core-lines">
+          <li>
+            <strong>문제 정의</strong>: 요구사항을 구조화하고 핵심 지표를 설계
+          </li>
+          <li>
+            <strong>구현</strong>: RAG 파이프라인과 정적 UI를 빠르게 프로토타이핑
+          </li>
+          <li>
+            <strong>배포</strong>: 재현 가능한 배포 루틴과 문서화 정착
+          </li>
+        </ul>
+      </section>
+
+      <section className="section">
+        <h2>프로젝트 하이라이트</h2>
+        <div className="grid grid--3">
+          <div className="card">
+            <span className="tag">AI</span>
+            <h3>알약 탐지 AI</h3>
+            <p>{projectSummaries.pill}</p>
+            <a className="link" href="/projects/codeit/pill-recognition/star">
+              상세 보기
+            </a>
+          </div>
+          <div className="card">
+            <span className="tag">RAG</span>
+            <h3>RFP RAG 시스템</h3>
+            <p>{projectSummaries.rfp}</p>
+            <a className="link" href="/projects/codeit/rfp-rag/star">
+              상세 보기
+            </a>
+          </div>
+          <div className="card">
+            <span className="tag">GEO</span>
+            <h3>상세페이지 자동 생성</h3>
+            <p>{projectSummaries.geo}</p>
+            <a className="link" href="/projects/codeit/geo-product-page/star">
+              상세 보기
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>경험</h2>
+        <div className="stack">
+          <div className="row">
+            <div className="row__title">(주)인톡 | 인턴 / AI 개발자</div>
+            <div className="row__meta">2025.11.06 - 2026.01.05</div>
+          </div>
+          <p>
+            LangChain 기반 보험 보장분석 자동화 파이프라인 설계·구축, PDF
+            텍스트·테이블 추출 및 RAG 구조 설계.
+          </p>
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>학력/교육</h2>
+        <div className="stack">
+          <div className="row">
+            <div className="row__title">코드잇 스프린트 AI 엔지니어 01기</div>
+            <div className="row__meta">2024.12 - 2025.07</div>
+          </div>
+          <div className="row">
+            <div className="row__title">고려대학교 수학과 석사</div>
+            <div className="row__meta">2019.03 - 2024.08</div>
+          </div>
+          <div className="row">
+            <div className="row__title">인하대학교 수학과 학사</div>
+            <div className="row__meta">2013.03 - 2019.02</div>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>수상</h2>
+        <ul className="core-lines">
+          <li>{awards.bootcamp}</li>
+          <li>{awards.university}</li>
+        </ul>
+        <div className="section__actions">
+          <a className="btn" href="/awards">
+            전체 수상 보기
+          </a>
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>기술 스택</h2>
+        <div className="tags">
+          <span>Python</span>
+          <span>FastAPI</span>
+          <span>LangChain</span>
+          <span>React</span>
+          <span>TypeScript</span>
+          <span>Firebase</span>
+          <span>YOLO</span>
+          <span>Chroma</span>
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>챗봇 안내</h2>
+        <div className="chat">
+          <p>질문하면 관련 페이지로 바로 안내합니다.</p>
+          <div className="chat__input">
+            <span className="chat__placeholder">예: RAG 프로젝트 설명해줘</span>
+            <button className="btn btn--primary">전송</button>
+          </div>
+        </div>
+      </section>
+
+      <section className="section">
+        <h2>연락처</h2>
+        <div className="contact">
+          <div>
+            이메일:{' '}
+            <a href={`mailto:${contact.email}`} className="contact__link">
+              {contact.email}
+            </a>
+          </div>
+          <div>
+            GitHub:{' '}
+            <a href={contact.github} className="contact__link">
+              {contact.github}
+            </a>
+          </div>
+          <div>
+            LinkedIn:{' '}
+            <a href={contact.linkedin} className="contact__link">
+              {contact.linkedin}
+            </a>
+          </div>
+          <div>
+            블로그:{' '}
+            <a href={contact.blog} className="contact__link">
+              {contact.blog}
+            </a>
+          </div>
+          <div>
+            전화:{' '}
+            <a href={`tel:${contact.phone}`} className="contact__link">
+              {contact.phone}
+            </a>
+          </div>
+        </div>
+      </section>
+    </div>
   )
 }
 
