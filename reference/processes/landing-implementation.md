@@ -24,3 +24,7 @@
 - 정적 콘텐츠는 `app/public/content/`에서 fetch로 읽는다.
 - 경로 예: `/content/resume/summary.md`
 - 프로젝트 문서 경로 예: `/content/projects/codeit/<project>/star.md`
+
+## 정적 자산
+- 프로젝트 이미지: `app/public/asset/images/projects/`
+- 경로 예: `/asset/images/projects/codeit/<project>/<file>`

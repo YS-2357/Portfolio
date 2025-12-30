@@ -16,6 +16,7 @@ React + TypeScript 정적 포트폴리오 사이트이며 Firebase Hosting에 �
 - 앱 구조와 라우팅: `reference/architecture/system-overview.md`
 - 랜딩 페이지 규칙: `reference/architecture/landing-guidelines.md`
 - 콘텐츠 스키마: `reference/domain/content-schema.md`
+- 수상 데이터 포맷: `reference/domain/awards-format.md`
 - Firebase Hosting: `reference/processes/firebase-hosting.md`
 - 랜딩 템플릿 적용: `reference/processes/landing-implementation.md`
 
